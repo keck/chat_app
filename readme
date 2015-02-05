@@ -1,0 +1,43 @@
+To that end, we present the Messaging App:
+
+The Messaging App is a real-time event notification system, most simply
+understood as a chat application.  To that end, it supports the following
+functionality:
+
+ o A client application (of which there can be more than one instance) and a
+   single server.
+
+ o For clients, there is no distinction between producers and consumers - every
+   client can both send and receive messages.
+
+ o Both the client and server support persistent connections (as opposed to a
+   polling interface) for a near real time experience.
+
+ o Peer-to-peer communications, thus some degree of authentication and
+   addressing will be required.
+
+ o The concept of groups/channels, allowing individuals to subscribe to a group
+   and for messages sent to a group to be broadcast to individual clients
+
+ o A REST API around the server services
+
+The design of the Messaging App is completely up to you, and is just as
+important as the functionality.  That said, we intend for this to be a smaller
+project that should take no more than a day of your +time, and we understand
+that you will not be able to do everything you would do for an actual
+production-ready project.  As such, as part of your deliverable, please include
+an explanation of your +approach to the problem, the general structure of your
+code, and any additional work the project may need to be release ready.
+
+You may choose any implementation language or technology you like, and can use
+whatever third party libraries you wish.  For example, you may choose to write
+the server in Node.js (one of our core +languages at CloudMine ;) or leverage
+existing Apache technologies - the choice is entirely yours.  Similarly, the
+clients can be written in anything from python to iOS.  Additionally, there is
+no need +to support persistence via a backend data store - everything can
+reside in local memory if you wish.
+
+The project is meant to be a showcase of your areas of expertise as well as
+your technical passions.  We hope you have fun, and we very much look forward
+to learning what excites you about the art of +software engineering.
+

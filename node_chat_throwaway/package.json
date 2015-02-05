@@ -1,0 +1,10 @@
+{
+  "name": "node-chat-throwaway",
+  "version": "0.0.1",
+  "description": "probably a very naive implementation that I plan to throw away",
+  "dependencies": {
+    "express": "^4.11.2",
+    "jquery": "^2.1.3",
+    "socket.io": "^1.3.3"
+  }
+}

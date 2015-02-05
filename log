@@ -1,0 +1,84 @@
+
+2/2 - read the email, started thinking.
+2/3 - started this log.
+
+Thoughts about tech:
+ - as suggested, node.js seems like a good place to start.
+
+   - plus
+    a) Cloudmine uses it
+    b) I've never used it
+    c) event driven nature aligns well with chat
+
+   - minus
+    a) Cloudmine uses it
+    b) I've never used it
+
+ - Other candidates:
+    * Just do it all in perl/ruby/python etc
+        - REST api not tough to do but could be done with way less effort
+    * Java - tomcat, jax-ws
+        - would be pretty quick to set up but I'd learn nothing new
+    * Mojolicio.us => actually I am having trouble finding a downside to this
+
+So then.  After some quick research, I'm going to start out with:
+
+   node.js
+ + socket.io for websockets
+ + express for static client and REST api,
+
+and see how far that gets me.  I should be able to make a real basic client
+using express too, and then maybe implement another client with the same
+protocol if I've got time.
+
+Restify looks cool too, if I ever didn't want all the other templating crap
+that comes with express.  Seems more useful for building a more independantly
+defined API.
+
+Afterward I might do it in mojo just because.
+
+Thoughts about things to consider/address that I may or may not have time for in the demo:
+ - documentation
+ - security
+ - persistent configuration
+ - message history (so you can see previous n msgs in channel when you join it
+ - differentiated authorization levels (+o, +v, etc)
+ - better dev environment + documented to encourage collaboration
+ - CI/CD automation
+ - service reliability
+ - monitoring
+
+Jotting down some quick thoughts about verbs + nouns for client<->serverAPI
+
+Nouns:
+ - client
+ - server
+ - message
+ - channel
+
+Client Verbs:
+ - connect
+ - disconnect
+ - say (channel?, message)
+ - join (channel)
+ - part (channel)
+ - msg (client, message)
+
+Server Verbs:
+
+* Installed npm on debian-based host.
+* Installed socket.io + express
+* node.js hello world
+* express.js hello world
+* socket.io usage
+
+* node.js based chat - plan to throwaway
+
+
+
+Update:
+ hey, neat - discovered express.io, a superset of express + socket.io.  Supports broadcasting.  sweet!
+
+
+
+
