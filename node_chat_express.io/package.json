@@ -1,0 +1,9 @@
+{
+  "name": "node-chat-express.io",
+  "version": "0.0.1",
+  "description": "probably even worse than the first but hey, it's using better libs",
+  "dependencies": {
+    "express.io": "^1.1.13",
+    "jquery": "^2.1.3"
+  }
+}

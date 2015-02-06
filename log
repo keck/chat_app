@@ -6,12 +6,12 @@ Thoughts about tech:
  - as suggested, node.js seems like a good place to start.
 
    - plus
-    a) Cloudmine uses it
+    a) you use it
     b) I've never used it
     c) event driven nature aligns well with chat
 
    - minus
-    a) Cloudmine uses it
+    a) you use it
     b) I've never used it
 
  - Other candidates:
@@ -74,11 +74,18 @@ Server Verbs:
 
 * node.js based chat - plan to throwaway
 
-
-
+2/5
 Update:
  hey, neat - discovered express.io, a superset of express + socket.io.  Supports broadcasting.  sweet!
 
+* re-do node chat with express.io
+  * Started messing with examples at https://github.com/techpines/express.io/tree/master/examples#routing
+
+  * Hey, great - the messages provided for the client are /already/ JSON
+
+2/6
+At this point I've experimented with something that will accomplish each of the
+pieces, so it's time to start putting them together.
 
 
 
