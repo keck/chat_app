@@ -1,0 +1,10 @@
+{
+  "name": "nds-cloudmine-chat-app",
+  "version": "0.0.1",
+  "description": "toy chat app",
+  "dependencies": {
+    "express": "^4.11.2",
+    "jquery": "^2.1.3",
+    "socket.io": "^1.3.4"
+  }
+}

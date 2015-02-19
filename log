@@ -59,13 +59,18 @@ Nouns:
 Client Verbs:
  - connect
  - disconnect
+ - nick
  - say (channel?, message)
  - join (channel)
  - part (channel)
  - msg (client, message)
 
 Server Verbs:
-
+ - join (channel, client)
+ - part (channel, client)
+ - list (channel) // list users in channel
+ - list ()  // list channels
+ 
 * Installed npm on debian-based host.
 * Installed socket.io + express
 * node.js hello world
@@ -86,6 +91,34 @@ Update:
 2/6
 At this point I've experimented with something that will accomplish each of the
 pieces, so it's time to start putting them together.
+
+2/15
+Ok, took a big break from this to a) read 'eloquent javascript', and b) take
+care of the rest of life
+
+Picking this back up, I'm going through a more detailed express app, that
+includes use of jade for templating, because my front end design skills are
+crap.
+
+Worked on the code in express_chat/, and somewhat got it working.  On to the
+next stage .. rolling something more my-own than copy-pasta.
+
+Other thoughts  -  for 'peer to peer' requirement .. websockets seem ill-suited for this.
+Google-engineering reveals
+ - WebRTC http://www.webrtc.org
+ - https://github.com/webrtc/samples
+
+ and libs implementing it, like p:
+ - http://ozan.io/p/  Not sure if I'll get time to incorporate it.
+
+2/16
+  apropos: https://twitter.com/garybernhardt/status/566038610655576064
+
+  also found this curiosity: http://websocketd.com/
+  might be great for quick prototyping..
+
+2/18
+  continuing implementation
 
 
 
