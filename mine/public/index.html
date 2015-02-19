@@ -14,26 +14,48 @@
     </style>
   </head>
   <body>
+
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-2.1.3.js"></script>
-    <!--<script src="/main.js"></script>-->
 
     <script>
       var io = io.connect();
+      var defaultChannel = '#lobby';
+
+      // TODO input sanitization
+      var myUsername = prompt("What's your name?");
+
+      io.emit('set username', myUsername,
+        function(response){
+            if( response.OK === undefined ){
+                alert(response.ERROR);
+                location.reload();
+            } else {
+                $('#messages').append($('<li>').text("Welcome, " + myUsername));
+            }
+        });
 
       $('form').submit(function(){
-        io.emit('chat message', $('#m').val());
+        io.emit('speak', $('#m').val());
         $('#m').val('');
         return false;
       });
 
-      io.on('chat message', function(msg){
-        $('#messages').append($('<li>').text(msg.message));
+      io.on('speak', function(msg){
+          var text;
+          if (msg.user == myUsername) {
+            text = msg.message;
+          } else {
+            text = msg.user + ": " + msg.message;
+          }
+          $('#messages').append($('<li>').text(text));
       });
+
 
   </script>
 
