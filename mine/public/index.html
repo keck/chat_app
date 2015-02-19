@@ -20,6 +20,23 @@
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-2.1.3.js"></script>
-    <script src="/main.js"></script>
+    <!--<script src="/main.js"></script>-->
+
+    <script>
+      var io = io.connect();
+
+      $('form').submit(function(){
+        io.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+
+      io.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg.message));
+      });
+
+  </script>
+
+
   </body>
 </html>

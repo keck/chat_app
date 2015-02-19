@@ -1,18 +1,17 @@
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
+var app = require('express.io')();
+app.http().io();
 var port = process.env.PORT || 3000;
 
-app.use(express.static(__dirname + '/public'));
+app.io.route('chat message', function(req) {
+    console.log("got message!");
+    req.io.emit('chat message', {
+        message: req.data
+    })
+})
 
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
+// Client HTML
+app.get('/', function(req, res) {
+    res.sendfile(__dirname + '/public/index.html');
+})
 
-http.listen(port, function(){
-  console.log('listening on *:' + port);
-});
+app.listen(port);
