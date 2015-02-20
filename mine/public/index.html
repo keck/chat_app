@@ -46,12 +46,13 @@
         return false;
       });
 
-      io.on('speak', function(msg){
+      io.on('speak', function(response){
           var text;
-          if (msg.user == myUsername) {
-            text = " -> " + msg.message;
+          console.log(response);
+          if (response.user == myUsername) {
+            text = " -> " + response.message;
           } else {
-            text = msg.user + ": " + msg.message;
+            text = response.user + ": " + response.message;
           }
           $('#messages').append($('<li>').text(text));
       });
