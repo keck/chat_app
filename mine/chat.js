@@ -16,7 +16,7 @@ cmds.forEach( function(e, i, a){
 cmdString = cmdString.slice(0, cmdString.length - 1);
 
 var cmdRE = new RegExp('^\ *\/('+cmdString+')(.*)$', 'i');
-var userRE = new RegExp('/^[a-zA-Z][a-zA-Z0-9]+$/');
+var userRE = new RegExp('^[a-zA-Z][a-zA-Z0-9]+$');
 
 console.log("Valid commands: " + cmdRE);
 
@@ -79,14 +79,22 @@ function cmd_channels(req) {
 }
 
 function cmd_nick(req, newnick) {
-    console.log("I was asked to change nick to " + newnick);
+    var uname = clientSockets[req.socket.id];
+    console.log("I was asked to change nick from " + uname + " to " + newnick);
+    if( userRE.test(newnick) ) {
+        clients[uname] = undefined;
+        set_username(req, newnick);
+    } else {
+        console.log("invalid nick requested ->" + newnick + "<-");
+        req.io.emit("change username", { user: uname, message: "[server-error] invalid nick requested"});
+    }
 }
 
 function cmd_whoami(req){
     var uname = clientSockets[req.socket.id];
     if(uname === undefined) {
         console.log("unable to find matching username for id " + req.socket.id);
-        req.io.respond({ message: "[error] who are you?" });
+        req.io.emit("speak", { user: uname, message: "[server-error] whoami => unknown!"});
     } else {
         console.log("whoami => " + uname + ":" + req.socket.id);
         req.io.emit("speak", { user: uname, message: "[server-reply] whoami => " + uname });

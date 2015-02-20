@@ -44,11 +44,15 @@
         io.emit('speak', $('#m').val());
         $('#m').val('');
         return false;
+        });
+
+      io.on('change username', function(response){
+          myUsername = response.user;
+          $('#messages').append($('<li>').text(response.message));
       });
 
       io.on('speak', function(response){
           var text;
-          console.log(response);
           if (response.user == myUsername) {
             text = " -> " + response.message;
           } else {
