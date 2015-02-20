@@ -2,11 +2,18 @@ var app = require("express.io")();
 app.http().io();
 var port = process.env.PORT || 3000;
 
+// username => socket_id
 var clients = {};
+// socket_id => username
 var clientSockets = {};
 
+// socket_id => channel
+var channels = {};
+// channel => [ socket_ids ]
+var channelUsers = { };
+
 // List of valid commands
-var cmds = ["join", "part", "list", "users", "nick", "whoami", "msg"];
+var cmds = ["join", "part", "list", "users", "nick", "whoami", "whereami", "msg"];
 
 // Build a string of cmds usable in a regex
 var cmdString = "";
@@ -18,6 +25,7 @@ cmdString = cmdString.slice(0, cmdString.length - 1);
 var cmdRE = new RegExp('^\ *\/');
 var validCmdRE = new RegExp('^\ *\/('+cmdString+')(.*)$', 'i');
 var userRE = new RegExp('^[a-zA-Z][a-zA-Z0-9]+$');
+var chanRE = new RegExp('^#[a-zA-Z][a-zA-Z0-9]+$');
 
 console.log("Valid commands: " + validCmdRE);
 
@@ -27,7 +35,7 @@ app.io.route("speak", function(req) {
 
     console.log("-> "+data);
     // Commands we want to look for:
-    // join, part, list, channels, nick, msg
+    // join, part, list, channels, nick, msg etc.
     if( cmdRE.test(data) ) {
         if( validCmdRE.test(data) ) {
             var cmd = data.match(validCmdRE)[1];
@@ -40,11 +48,18 @@ app.io.route("speak", function(req) {
             req.io.emit("speak", { user: "SYSTEM", message: "Invalid command" });
         }
     } else {
-        app.io.broadcast("speak", {
+        // broadcast only to the users of the channel this user is in
+        var chan = channels[req.socket.id];
+        app.io.room(chan).broadcast("speak", {
             user: clientSockets[req.socket.id],
             message: data
         });
     }
+});
+
+app.io.route("join", function(req) {
+    var chan = req.data;
+    cmd_join(req, chan);
 });
 
 app.io.route("set username", set_initial_username);
@@ -69,10 +84,41 @@ function set_initial_username(req) {
 
 function cmd_join(req, chan) {
     console.log("I was asked to join channel " + chan);
+    var uname = clientSockets[req.socket.id];
+
+    if( chanRE.test(chan) ) {
+
+        if ( channelUsers[chan] === undefined ) {
+            channelUsers[chan] = { };
+        }
+        cmd_part(req);
+        req.io.join(chan);
+        channelUsers[chan][req.socket.id] = 1;
+        channels[req.socket.id] = chan;
+        req.io.emit("speak", { user: uname, message: "You have joined channel " + chan });
+
+    } else {
+        req.io.emit("speak", { user: uname, message: "[server-message] Invalid Channel Name"});
+    }
+    console.log(channelUsers[chan]);
+    console.log(channels);
 }
 
-function cmd_part(req, chan) {
-    console.log("I was asked to part channel " + chan);
+function cmd_part(req) {
+    var uname = clientSockets[req.socket.id];
+    var chan = channels[req.socket.id];
+
+    if ( chan !== undefined ) {
+      console.log("I was asked to part channel " + chan);
+
+      if( chanRE.test(chan) ) {
+          req.io.leave(chan);
+          delete channelUsers[chan][req.socket.id];
+          req.io.emit("speak", { user: uname, message: "You have left channel " + chan });
+      } else {
+          req.io.emit("speak", { user: uname, message: "[server-message] Invalid Channel Name"});
+      }
+    }
 }
 
 function cmd_list(req) {
@@ -103,6 +149,23 @@ function cmd_nick(req, newnick) {
         req.io.emit("change username", { user: uname, message: "[server-error] invalid nick requested"});
     }
     return false;
+}
+
+function cmd_whereami(req){
+    var chan = channels[req.socket.id];
+    var uname = clientSockets[req.socket.id];
+    if(uname === undefined) {
+        console.log("unable to find matching username for id " + req.socket.id);
+        req.io.emit("speak", { user: uname, message: "[server-error] whereami => unknown!"});
+    } else {
+        if(chan === undefined) {
+            console.log("unable to find matching channel for id " + req.socket.id);
+            req.io.emit("speak", { user: uname, message: "[server-error] whereami => unknown!"});
+        } else {
+            console.log("whereami => " + uname + ":" + chan);
+            req.io.emit("speak", { user: uname, message: "[server-reply] whereami => " + chan });
+        }
+    }
 }
 
 function cmd_whoami(req){

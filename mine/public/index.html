@@ -25,7 +25,7 @@
 
     <script>
       var io = io.connect();
-      var defaultChannel = 'lobby';
+      var defaultChannel = '#lobby';
 
       // TODO input sanitization
       var myUsername = prompt("What's your name?");
@@ -39,6 +39,8 @@
                 $('#messages').append($('<li>').text("Welcome, " + myUsername));
             }
         });
+
+      io.emit('join', defaultChannel);
 
       $('form').submit(function(){
         io.emit('speak', $('#m').val());
@@ -62,7 +64,6 @@
       });
 
   </script>
-
 
   </body>
 </html>
