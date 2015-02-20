@@ -121,3 +121,10 @@ Google-engineering reveals
   continuing implementation
   re-implemented all existing crap in express.io
 
+Status:
+ - /msg doesn't work - can't figure it out with express.io easily.  gah!  I
+   have all the pieces, I thought.
+ - Using WebRTC would be a better fit anyway, and doesn't rely on server maintaining privacy.
+ - REST interface -- also not done.  I can probably throw some restify on top
+   of this by the time we meet up again (assuming you want to!)
+
