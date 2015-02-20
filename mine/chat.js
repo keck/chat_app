@@ -51,10 +51,12 @@ function set_username(req, username) {
         clientSockets[req.socket.id] = username;
         console.log("paired username:websocket -> "+username+":"+req.socket.id);
         req.io.respond({ name: "speak", OK: "username set successfully" });
+        return true;
     } else {
         console.log("failed to pair username:websocket, username already in use");
         req.io.respond({ name: "speak", ERROR: "username in use" });
     }
+    return false;
 }
 
 function set_initial_username(req) {
@@ -83,11 +85,21 @@ function cmd_nick(req, newnick) {
     console.log("I was asked to change nick from " + uname + " to " + newnick);
     if( userRE.test(newnick) ) {
         clients[uname] = undefined;
-        set_username(req, newnick);
+        if (set_username(req, newnick) ) {
+            req.io.emit("change username", {
+               user: newnick,
+               message: "[server-message] nick changed from "+ uname + " to " + newnick
+            });
+            req.io.broadcast("speak", {
+               user: "SYSTEM",
+               message: "[server-message] " + uname + " is now known as " + newnick
+            });
+        }
     } else {
         console.log("invalid nick requested ->" + newnick + "<-");
         req.io.emit("change username", { user: uname, message: "[server-error] invalid nick requested"});
     }
+    return false;
 }
 
 function cmd_whoami(req){
