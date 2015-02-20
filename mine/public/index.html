@@ -25,7 +25,7 @@
 
     <script>
       var io = io.connect();
-      var defaultChannel = '#lobby';
+      var defaultChannel = 'lobby';
 
       // TODO input sanitization
       var myUsername = prompt("What's your name?");
@@ -49,13 +49,12 @@
       io.on('speak', function(msg){
           var text;
           if (msg.user == myUsername) {
-            text = msg.message;
+            text = " -> " + msg.message;
           } else {
             text = msg.user + ": " + msg.message;
           }
           $('#messages').append($('<li>').text(text));
       });
-
 
   </script>
 

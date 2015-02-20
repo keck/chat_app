@@ -8,7 +8,7 @@ var clientSockets = {};
 // routes
 app.io.route('speak', function(req) {
     console.log("-> "+req.data)
-    req.io.broadcast('speak', {
+    app.io.broadcast('speak', {
         user: clientSockets[req.socket.id],
         message: req.data
     });
@@ -16,17 +16,17 @@ app.io.route('speak', function(req) {
 
 app.io.route('set username', function(req) {
     var username = req.data;
-    console.log("attempting to set username -> "+req.data+":"+req.socket.id);
     if(clients[username] === undefined) {
         clients[username] = req.socket.id;
         clientSockets[req.socket.id] = username;
         console.log("paired username:websocket -> "+req.data+":"+req.socket.id);
         req.io.respond({ OK: 'username set successfully' });
     } else {
+        console.log("failed to pair username:websocket, username already in use");
         req.io.respond({ ERROR: 'username in use' });
     }
-
 });
+
 
 
 
