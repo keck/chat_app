@@ -128,3 +128,7 @@ Status:
  - REST interface -- also not done.  I can probably throw some restify on top
    of this by the time we meet up again (assuming you want to!)
 
+
+As such, as part of your deliverable, please include
+an explanation of your +approach to the problem, the general structure of your
+code, and any additional work the project may need to be release ready.
