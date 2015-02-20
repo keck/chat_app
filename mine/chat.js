@@ -6,7 +6,7 @@ var clients = {};
 var clientSockets = {};
 
 // List of valid commands
-var cmds = ["join", "part", "list", "channels", "nick", "whoami", "msg"];
+var cmds = ["join", "part", "list", "users", "nick", "whoami", "msg"];
 
 // Build a string of cmds usable in a regex
 var cmdString = "";
@@ -15,10 +15,11 @@ cmds.forEach( function(e, i, a){
 });
 cmdString = cmdString.slice(0, cmdString.length - 1);
 
-var cmdRE = new RegExp('^\ *\/('+cmdString+')(.*)$', 'i');
+var cmdRE = new RegExp('^\ *\/');
+var validCmdRE = new RegExp('^\ *\/('+cmdString+')(.*)$', 'i');
 var userRE = new RegExp('^[a-zA-Z][a-zA-Z0-9]+$');
 
-console.log("Valid commands: " + cmdRE);
+console.log("Valid commands: " + validCmdRE);
 
 // routes
 app.io.route("speak", function(req) {
@@ -28,13 +29,16 @@ app.io.route("speak", function(req) {
     // Commands we want to look for:
     // join, part, list, channels, nick, msg
     if( cmdRE.test(data) ) {
-        var cmd = data.match(cmdRE)[1];
-        var args = data.match(cmdRE)[2].trim();
+        if( validCmdRE.test(data) ) {
+            var cmd = data.match(validCmdRE)[1];
+            var args = data.match(validCmdRE)[2].trim();
 
-        var fname = "cmd_" + cmd.toLowerCase();
-        // I'm just looking for the rough edges..
-        eval(fname)(req, args);
-
+            var fname = "cmd_" + cmd.toLowerCase();
+            // I'm just looking for the rough edges..
+            eval(fname)(req, args);
+        } else {
+            req.io.emit("speak", { user: "SYSTEM", message: "Invalid command" });
+        }
     } else {
         app.io.broadcast("speak", {
             user: clientSockets[req.socket.id],
@@ -63,7 +67,6 @@ function set_initial_username(req) {
     set_username(req, req.data);
 }
 
-//var cmds = ["join", "part", "list", "channels", "nick", "msg"];
 function cmd_join(req, chan) {
     console.log("I was asked to join channel " + chan);
 }
@@ -72,20 +75,20 @@ function cmd_part(req, chan) {
     console.log("I was asked to part channel " + chan);
 }
 
-function cmd_list(req, chan) {
-    console.log("I was asked to list users in chan" + chan);
+function cmd_list(req) {
+    console.log("I was asked to list all the channels");
 }
 
-function cmd_channels(req) {
-    console.log("I was asked to list all channels");
+function cmd_users(req, chan) {
+    console.log("I was asked to list all users");
 }
 
 function cmd_nick(req, newnick) {
     var uname = clientSockets[req.socket.id];
     console.log("I was asked to change nick from " + uname + " to " + newnick);
-    if( userRE.test(newnick) ) {
+    if (userRE.test(newnick)) {
         clients[uname] = undefined;
-        if (set_username(req, newnick) ) {
+        if (set_username(req, newnick)) {
             req.io.emit("change username", {
                user: newnick,
                message: "[server-message] nick changed from "+ uname + " to " + newnick
