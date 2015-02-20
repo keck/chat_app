@@ -100,8 +100,6 @@ function cmd_join(req, chan) {
     } else {
         req.io.emit("speak", { user: uname, message: "[server-message] Invalid Channel Name"});
     }
-    console.log(channelUsers[chan]);
-    console.log(channels);
 }
 
 function cmd_part(req) {
@@ -123,10 +121,28 @@ function cmd_part(req) {
 
 function cmd_list(req) {
     console.log("I was asked to list all the channels");
+    var answer = "[server-message] ";
+    for ( var chan in channelUsers ) {
+        answer += chan + " ";
+    }
+    req.io.emit("speak", { user: 'SYSTEM', message: answer });
 }
 
 function cmd_users(req, chan) {
-    console.log("I was asked to list all users");
+    var chan = channels[req.socket.id];
+
+    // this is the keys of channels in current room
+    if ( chan !== undefined ) {
+        console.log("I was asked to list all users in room " + chan);
+
+        var answer = "[server-message] ";
+        for ( var sid in channelUsers[chan] ) {
+            answer += clientSockets[sid] + " ";
+        }
+        req.io.emit("speak", { user: 'SYSTEM', message: answer });
+    } else {
+        req.io.emit("speak", { user: 'SYSTEM', message: "[server-message] Not in a channel!"});
+    }
 }
 
 function cmd_nick(req, newnick) {
@@ -181,6 +197,10 @@ function cmd_whoami(req){
 
 function cmd_msg(req, target, msg) {
     console.log("I was asked to tell " + target + " ''" + msg + "'");
+
+    //var uname = clientSockets[req.socket.id];
+    //var targetId = clients[target];
+
 }
 
 // Client HTML
